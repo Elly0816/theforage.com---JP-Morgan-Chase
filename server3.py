@@ -32,15 +32,11 @@ from random import normalvariate, random
 from socketserver import ThreadingMixIn
 
 import dateutil.parser
-# from flask import Flask
 
 ################################################################################
 #
 # Config
 
-
-# Port to listen on
-PORT = 3000
 # Sim params
 
 REALTIME = True
@@ -57,10 +53,14 @@ FREQ = (12, 36, 50)
 
 OVERLAP = 4
 
+# Port
+
+PORT = 3000
 
 ################################################################################
 #
 # Test Data
+
 
 def bwalk(min, max, std):
     """ Generates a bounded random walk. """
@@ -226,8 +226,6 @@ def run(routes, host='0.0.0.0', port=PORT):
     """
 
     class RequestHandler(http.server.BaseHTTPRequestHandler):
-        print("In request handler")
-
         def log_message(self, *args, **kwargs):
             pass
 
@@ -235,22 +233,25 @@ def run(routes, host='0.0.0.0', port=PORT):
             get(self, routes)
 
     server = ThreadedHTTPServer((host, port), RequestHandler)
-    # server =
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
-    print(f'HTTP server started on port {PORT}')
+    print(f'HTTP server started on port {port}...')
     try:
         while True:
             from time import sleep
             sleep(1)
     except KeyboardInterrupt:
-        print("Server is shutting down...")
+        print("Server shutting down...")
         server.shutdown()
-        thread.join()    # server.serve_forever()
-        # server.serve_forever()
+        thread.join()
 
-        # server.waitForThread()
+    # while True:
+    #     from time import sleep
+    #     sleep(1)
+    # server.shutdown()
+    # server.start()
+    # server.waitForThread()
 
 
 ################################################################################

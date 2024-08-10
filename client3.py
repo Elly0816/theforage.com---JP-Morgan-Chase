@@ -48,10 +48,8 @@ def getRatio(price_a, price_b):
 # Main
 if __name__ == "__main__":
     # Query the price once every N seconds.
-    random_added = random.random()
-    print(f"{random_added} This is it")
     response = urllib.request.urlopen(
-        QUERY.format(random_added)).read()
+        QUERY.format(random.random())).read()
     print(response)
     for _ in iter(range(N)):
         quotes = json.loads(urllib.request.urlopen(
