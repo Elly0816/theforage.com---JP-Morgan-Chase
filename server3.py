@@ -32,11 +32,15 @@ from random import normalvariate, random
 from socketserver import ThreadingMixIn
 
 import dateutil.parser
+# from flask import Flask
 
 ################################################################################
 #
 # Config
 
+
+# Port to listen on
+PORT = 3000
 # Sim params
 
 REALTIME = True
@@ -216,12 +220,14 @@ def get(req_handler, routes):
                 return
 
 
-def run(routes, host='0.0.0.0', port=8080):
+def run(routes, host='0.0.0.0', port=PORT):
     """ Runs a class as a server whose methods have been decorated with
         @route.
     """
 
     class RequestHandler(http.server.BaseHTTPRequestHandler):
+        print("In request handler")
+
         def log_message(self, *args, **kwargs):
             pass
 
@@ -229,16 +235,22 @@ def run(routes, host='0.0.0.0', port=8080):
             get(self, routes)
 
     server = ThreadedHTTPServer((host, port), RequestHandler)
+    # server =
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
-    print('HTTP server started on port 8080')
-    while True:
-        from time import sleep
-        sleep(1)
-    server.shutdown()
-    server.start()
-    server.waitForThread()
+    print(f'HTTP server started on port {PORT}')
+    try:
+        while True:
+            from time import sleep
+            sleep(1)
+    except KeyboardInterrupt:
+        print("Server is shutting down...")
+        server.shutdown()
+        thread.join()    # server.serve_forever()
+        # server.serve_forever()
+
+        # server.waitForThread()
 
 
 ################################################################################
@@ -326,7 +338,7 @@ class App(object):
                     'price': asks2[0][0],
                     'size': asks2[0][1]
                 }
-            }]
+        }]
 
 
 ################################################################################
